@@ -5,5 +5,7 @@ In this homework assignment you will use VBA scripting to analyze real stock mar
 Depending on your comfort level with VBA, choose your assignment from Easy, Moderate, or Hard below.
 
 Submit final work to Github:
-• A screen shot for each year of your results on the Multi Year Stock Data.
-• VBA Scripts as separate files.
+
+A screen shot for each year of your results on the Multi Year Stock Data.
+
+VBA Scripts as separate files.
