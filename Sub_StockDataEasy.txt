@@ -1,0 +1,60 @@
+Sub StockDataEasy()
+ 
+' repeat in each worksheet
+For Each ws In Worksheets
+
+' Set an initial variable for holding the Ticker
+Dim Ticker As String
+
+' Set an initial variable for holding the total volume per ticker
+' Set the total volume to zero
+Dim TotalStockVolume As Double
+TotalStockVolume = 0
+
+' Keep track of the location for each ticker in the summary ticker table
+Dim Ticker_Table_Row As Integer
+Ticker_Table_Row = 2
+
+' set summary ticker table headings
+ws.Range("I1").Value = "Ticker"
+ws.Range("J1").Value = "Total Stock Volume"
+
+' Determine the Last Row
+LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+'Loop through all the ticker volumes
+For i = 2 To LastRow
+' Check if we are still within the same ticker
+    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+      ' Set the Ticker name
+      Ticker = ws.Cells(i, 1).Value
+
+      ' Add to the ticker volume
+      TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+
+      ' Print the Ticker in the Summary Table
+      ws.Range("I" & Ticker_Table_Row).Value = Ticker
+
+      ' Print the Total Stock Volume to the Summary Table
+      ws.Range("J" & Ticker_Table_Row).Value = TotalStockVolume
+
+      ' Add one to the ticker table table row
+      Ticker_Table_Row = Ticker_Table_Row + 1
+      
+      ' Reset the Total Stock Volume
+      TotalStockVolume = 0
+      
+    ' If the cell immediately following a row is the same brand...
+    Else
+
+      ' Add to the Total Volume
+      TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+      
+    End If
+
+  Next i
+        
+Next ws
+  
+End Sub

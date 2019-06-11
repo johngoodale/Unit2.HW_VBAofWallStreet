@@ -1,0 +1,105 @@
+Sub StockDataModerate()
+ 
+' repeat in each worksheet
+For Each ws In Worksheets
+
+' Set an initial variable for holding the Ticker
+Dim Ticker As String
+
+' Set an initial variable for holding the total volume per ticker
+' Set the total volume to zero
+Dim TotalStockVolume As Double
+TotalStockVolume = 0
+
+' Keep track of the location for each ticker in the summary ticker table
+Dim Ticker_Table_Row As Integer
+Ticker_Table_Row = 2
+
+'Set the additonal variables for the Moderate code
+Dim YrOpen As Double
+Dim YrClose As Double
+Dim YrChange As Double
+Dim PctYrChange As Double
+Dim OpenPriceRow As Long
+OpenPriceRow = 2
+
+
+' set summary ticker table headings
+ws.Range("I1").Value = "Ticker"
+ws.Range("J1").Value = "Yearly Change"
+ws.Range("K1").Value = "Percent Change"
+ws.Range("L1").Value = "Total Stock Volume"
+
+' Determine the Last Row
+LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+'Loop through all the ticker volumes
+For i = 2 To LastRow
+' Check if we are still within the same ticker
+    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+      ' Set the Ticker name
+      Ticker = ws.Cells(i, 1).Value
+      
+      'Set Year Open Price
+      YrOpen = ws.Range("C" & OpenPriceRow).Value
+        
+      'Set Year Close Price
+      YrClose = ws.Cells(i, 6).Value
+      
+      'Run the yr change calc and put into the ticker table row
+      YrChange = YrClose - YrOpen
+      ws.Range("J" & Ticker_Table_Row).Value = YrChange
+      
+      'Formatting Yearly Chnage and Percent Change
+      ws.Range("J" & Ticker_Table_Row).NumberFormat = "0.00000000"
+      ws.Range("K" & Ticker_Table_Row).NumberFormat = "0.00%"
+      
+      'Run the % yr change calc and put into the ticker table row
+      If YrOpen = 0 Then
+      PctYrChange = 0
+      ws.Range("K" & Ticker_Table_Row).Value = PctYrChange
+      Else
+      PctYrChange = (YrClose - YrOpen) / YrOpen
+      ws.Range("K" & Ticker_Table_Row).Value = PctYrChange
+      End If
+       
+      ' Add to the ticker volume
+      TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+
+      ' Print the Ticker in the Summary Table
+      ws.Range("I" & Ticker_Table_Row).Value = Ticker
+
+      ' Print the Total Stock Volume to the Summary Table
+      ws.Range("L" & Ticker_Table_Row).Value = TotalStockVolume
+      
+      'Conditonal formatting
+      If ws.Range("J" & Ticker_Table_Row).Value >= 0 Then
+      ws.Range("J" & Ticker_Table_Row).Interior.ColorIndex = 43
+      Else
+      ws.Range("J" & Ticker_Table_Row).Interior.ColorIndex = 3
+      End If
+
+      ' Add one to the ticker table table row
+      Ticker_Table_Row = Ticker_Table_Row + 1
+      
+      ' Reset the Total Stock Volume
+      TotalStockVolume = 0
+      
+      'Account for the remaning OpenPriceRows
+      OpenPriceRow = i + 1
+                
+    ' If the cell immediately following a row is the same ticker
+    Else
+
+      ' Add to the Total Volume
+      TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+      
+    End If
+    
+  Next i
+        
+Next ws
+  
+End Sub
+
